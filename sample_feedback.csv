@@ -1,0 +1,51 @@
+feedback_id,customer_name,feedback_text,rating,category,date,sentiment
+1,John Smith,Great product quality,5,Product Quality,2026-05-01,positive
+2,Sarah Johnson,Delivery was slow,2,Delivery,2026-05-02,negative
+3,Mike Brown,Excellent customer service,5,Customer Service,2026-05-03,positive
+4,Emily Davis,Product broke after a week,1,Product Quality,2026-05-04,negative
+5,David Wilson,Good value for money,4,Pricing,2026-05-05,positive
+6,Jessica Martinez,Amazing experience overall,5,Overall,2026-05-06,positive
+7,Robert Taylor,Website is confusing,2,Website,2026-05-07,negative
+8,Linda Anderson,Fast shipping,4,Delivery,2026-05-08,positive
+9,James Thomas,Poor packaging,1,Packaging,2026-05-09,negative
+10,Patricia Jackson,Exactly as described,5,Product Quality,2026-05-10,positive
+11,Christopher White,Customer support helped me,4,Customer Service,2026-05-11,positive
+12,Nancy Harris,Too expensive,2,Pricing,2026-05-12,negative
+13,Daniel Martin,Love the design,5,Design,2026-05-13,positive
+14,Karen Thompson,Defective item received,1,Product Quality,2026-05-14,negative
+15,Matthew Garcia,Great deals and offers,5,Pricing,2026-05-15,positive
+16,Betty Martinez,Took too long to arrive,2,Delivery,2026-05-16,negative
+17,Mark Robinson,Very satisfied customer,5,Overall,2026-05-17,positive
+18,Sandra Clark,Instructions unclear,2,Documentation,2026-05-18,negative
+19,Donald Rodriguez,Best purchase ever,5,Product Quality,2026-05-19,positive
+20,Ashley Lewis,Not worth the price,1,Pricing,2026-05-20,negative
+21,Steven Lee,Fantastic quality,5,Product Quality,2026-05-21,positive
+22,Kimberly Walker,Poor communication,2,Customer Service,2026-05-22,negative
+23,Paul Hall,Highly recommend,5,Overall,2026-05-23,positive
+24,Donna Allen,Missing parts,1,Packaging,2026-05-24,negative
+25,Andrew Young,Great bang for buck,4,Pricing,2026-05-25,positive
+26,Carol Hernandez,Damaged during shipping,1,Delivery,2026-05-26,negative
+27,Joshua King,Premium quality,5,Product Quality,2026-05-27,positive
+28,Margaret Wright,Disappointed with purchase,2,Overall,2026-05-28,negative
+29,Kenneth Lopez,Exceeded expectations,5,Product Quality,2026-05-29,positive
+30,Susan Hill,Average quality,3,Product Quality,2026-05-30,neutral
+31,Kevin Scott,Quick response from support,4,Customer Service,2026-05-31,positive
+32,Deborah Green,Very slow delivery,1,Delivery,2026-06-01,negative
+33,Brian Adams,Perfect fit and finish,5,Product Quality,2026-06-02,positive
+34,Pamela Nelson,Not as pictured,2,Product Quality,2026-06-03,negative
+35,Edward Carter,Fantastic service,5,Customer Service,2026-06-04,positive
+36,Rachel Roberts,Broke immediately,1,Product Quality,2026-06-05,negative
+37,Ronald Phillips,Good quality product,4,Product Quality,2026-06-06,positive
+38,Maria Campbell,Rude customer service,1,Customer Service,2026-06-07,negative
+39,Timothy Parker,Excellent value,5,Pricing,2026-06-08,positive
+40,Diane Evans,Late delivery,2,Delivery,2026-06-09,negative
+41,Jason Edwards,Superb craftsmanship,5,Product Quality,2026-06-10,positive
+42,Julie Collins,Defective product,1,Product Quality,2026-06-11,negative
+43,Jeffrey Reeves,Very professional team,5,Customer Service,2026-06-12,positive
+44,Joyce Morris,Waste of money,1,Pricing,2026-06-13,negative
+45,Ryan Rogers,Best in class product,5,Product Quality,2026-06-14,positive
+46,Diane Morgan,Poor after sales support,2,Customer Service,2026-06-15,negative
+47,Jacob Peterson,Highly satisfied,5,Overall,2026-06-16,positive
+48,Carolyn Simmons,Quality issues found,1,Product Quality,2026-06-17,negative
+49,Gary Jackson,Wonderful experience,5,Overall,2026-06-18,positive
+50,Gloria Lee,Not recommended,1,Overall,2026-06-19,negative
