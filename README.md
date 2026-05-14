@@ -15,12 +15,14 @@ This end-to-end data engineering and analytics project ingests unstructured cust
 ## 📁 Repository Structure
 ```text
 customer-feedback-ai/
+customer-feedback-ai/
 ├── README.md                  <- Project documentation
 ├── data/
 │   └── sample_feedback.csv    <- 50-row sample dataset to test the pipeline
 ├── sql/  
-│   ├── 01_setup_schema.sql    <- DDL scripts to create datasets and tables
-│   ├── 02_ai_analytics.sql    <- Processing queries for sentiment & topic extraction
+│   ├── 01_schema.sql          <- DDL scripts to create the base tables (raw & processed data)
+│   ├── 02_views.sql           <- Scripts to create BI views specifically for Power BI/Tableau
+│   ├── 03_analytics_queries.sql <- Ad-hoc exploration and pipeline evaluation queries
 ├── dashboards/
 │   └── feedback_insights.pbix <- Exported Power BI dashboard file
 ```
