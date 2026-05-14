@@ -23,9 +23,10 @@ customer-feedback-ai/
 │   ├── 02_ai_analytics.sql    <- Processing queries for sentiment & topic extraction
 ├── dashboards/
 │   └── feedback_insights.pbix <- Exported Power BI dashboard file
+text'''
 
-📦 Dataset Content
-This project utilizes publicly available Kaggle datasets to simulate a real-world omnichannel support environment:
+##📦 Dataset Content
+This project utilises publicly available Kaggle datasets to simulate a real-world omnichannel support environment:
 
 E-Commerce 100k Reviews: Used for product sentiment analysis and topic classification.
 
