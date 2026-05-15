@@ -1,0 +1,51 @@
+source_id,raw_text,rating,author,feedback_date,product_name
+TW-001,"The new login page keeps timing out on mobile. Tried three times this morning and gave up. Very frustrated.",1.0,user_ananya_k,2025-05-01,MobileApp
+AM-002,"Absolutely love the new dashboard redesign! Everything is so much easier to find now.",5.0,priya_sharma,2025-05-01,WebApp
+ST-003,"I was charged twice for my subscription this month. Need a refund immediately. Ticket #48291.",1.0,rahul_verma,2025-05-02,Subscription
+TW-004,"Search results take 8-10 seconds to load. Was instant last week. Something broke.",2.0,amit_patel,2025-05-02,SearchFeature
+AM-005,"Best customer support I have experienced. Resolved my issue in under 10 minutes.",5.0,sneha_iyer,2025-05-03,SupportTeam
+ST-006,"The export to CSV button does nothing when I click it in Firefox. Works fine in Chrome.",2.0,deepak_nair,2025-05-03,DataExport
+TW-007,"Would love a dark mode option. My eyes hurt using the app at night.",3.0,kavita_rao,2025-05-04,WebApp
+AM-008,"Delivery took 3 weeks instead of the promised 5 days. No tracking updates either.",1.0,vijay_krishnan,2025-05-04,Shipping
+ST-009,"The AI recommendations feature is outstanding. Saves me hours of work every week.",5.0,meera_joshi,2025-05-05,AIFeature
+TW-010,"App crashes every time I try to attach a file larger than 5MB. Bug needs fixing.",1.0,suresh_pillai,2025-05-05,MobileApp
+AM-011,"Pricing is way too high for what you get. Cancelled my plan.",2.0,anita_gupta,2025-05-06,Pricing
+ST-012,"Please add a bulk delete option. Having to delete items one by one is very tedious.",3.0,rajesh_mehta,2025-05-06,WebApp
+TW-013,"Just discovered the keyboard shortcuts. This changed everything for my workflow!",5.0,lakshmi_nair,2025-05-07,WebApp
+AM-014,"Error 503 keeps showing up on checkout. Lost my cart twice.",1.0,arjun_singh,2025-05-07,Checkout
+ST-015,"The new notification system is spammy. Getting 20+ emails a day for minor changes.",2.0,divya_reddy,2025-05-08,Notifications
+TW-016,"Performance is noticeably slower after the last update. Rolling back fixed it.",2.0,kiran_kumar,2025-05-08,Performance
+AM-017,"Fantastic product. Exactly what my team needed. Highly recommend.",5.0,pooja_sharma,2025-05-09,WebApp
+ST-018,"The API rate limits are too restrictive for enterprise use cases. Need higher limits.",2.0,arun_krishna,2025-05-09,API
+TW-019,"Account got locked for no reason. Support took 48 hours to respond.",1.0,nisha_patel,2025-05-10,Account
+AM-020,"Filter options are confusing. Spent 20 minutes trying to find basic settings.",2.0,sanjay_gupta,2025-05-10,WebApp
+ST-021,"The mobile app is finally stable after months of crashes. Great improvement!",4.0,rekha_iyer,2025-05-11,MobileApp
+TW-022,"Two-factor authentication setup was seamless. Security features are top notch.",5.0,madhav_rao,2025-05-11,Security
+AM-023,"My payment method keeps getting declined even though it works everywhere else.",1.0,sunita_verma,2025-05-12,Billing
+ST-024,"Would love integration with Slack. Our whole team uses it for communication.",3.0,gopal_nair,2025-05-12,Integrations
+TW-025,"The analytics dashboard is beautiful and actually useful. Well done team.",5.0,lalitha_pillai,2025-05-13,Analytics
+AM-026,"Fonts are tiny on tablet. Need better responsive design for non-phone screens.",2.0,venkat_reddy,2025-05-13,MobileApp
+ST-027,"Data export is missing the timestamp column. Critical for our compliance reports.",2.0,padma_krishnan,2025-05-14,DataExport
+TW-028,"The onboarding tutorial is excellent. Got my whole team up to speed in an hour.",5.0,ashok_mehta,2025-05-14,Onboarding
+AM-029,"Constant pop-ups asking to upgrade. I am already a paid user. Very annoying.",1.0,usha_sharma,2025-05-15,WebApp
+ST-030,"Overall really happy with the product. Minor bugs but nothing that stops my work.",4.0,balaji_kumar,2025-05-15,WebApp
+TW-031,"The search bar does not remember recent searches anymore after the update.",2.0,chitra_nair,2025-05-08,SearchFeature
+AM-032,"Subscription was cancelled without notice. Lost all my data. Devastating.",1.0,dinesh_patel,2025-05-09,Subscription
+ST-033,"The collaboration features are exactly what distributed teams need. Bravo.",5.0,eswari_iyer,2025-05-10,Collaboration
+TW-034,"Auto-save stopped working. Lost an hour of work when my browser crashed.",1.0,farida_khan,2025-05-11,WebApp
+AM-035,"Page layout breaks completely when I zoom in for accessibility. Please fix.",2.0,ganesh_reddy,2025-05-12,Accessibility
+ST-036,"Response time from support went from 1 day to 1 week. Something changed?",2.0,hema_sharma,2025-05-13,SupportTeam
+TW-037,"The new bulk action feature saved our admin team so much time. Thank you!",5.0,indira_pillai,2025-05-14,WebApp
+AM-038,"Invoice PDF does not include company name even though it is set in the profile.",2.0,jagdish_nair,2025-05-15,Billing
+ST-039,"Would like option to set different notification preferences per project.",4.0,kamala_krishna,2025-05-06,Notifications
+TW-040,"Loading spinner never stops on the reports page. Tried clearing cache, no luck.",1.0,lalith_gupta,2025-05-07,Reports
+AM-041,"The calendar integration with Google Calendar is flawless. Big time saver.",5.0,malathi_verma,2025-05-08,Integrations
+ST-042,"Copied text from PDF loses all formatting. Need better paste handling.",2.0,narayan_iyer,2025-05-09,DataExport
+TW-043,"Password reset email went to spam five times in a row. Please fix your sender.",2.0,omkar_sharma,2025-05-10,Account
+AM-044,"This tool replaced three separate subscriptions for us. Incredible value.",5.0,prabhavathi_rao,2025-05-11,WebApp
+ST-045,"The pricing page is misleading. Hidden fees only appear at checkout.",1.0,quazi_ahmed,2025-05-12,Pricing
+TW-046,"Graph visualizations are gorgeous and actually help me understand my data.",5.0,radha_pillai,2025-05-13,Analytics
+AM-047,"Upload progress bar gets stuck at 99% every single time. Deeply frustrating.",2.0,selvam_kumar,2025-05-14,FileUpload
+ST-048,"Please add keyboard navigation for accessibility compliance. Essential for us.",3.0,tara_nair,2025-05-15,Accessibility
+TW-049,"The weekly digest email is perfectly formatted. Love the content summary.",5.0,uma_krishnan,2025-05-04,Notifications
+AM-050,"Session expires after 5 minutes of inactivity. Way too short for my workflow.",2.0,vasant_mehta,2025-05-05,Security
