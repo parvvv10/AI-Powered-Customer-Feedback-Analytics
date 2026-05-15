@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Feedback Intelligence · Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0b0f14;
+    --surface:  #111820;
+    --surface2: #18222e;
+    --border:   #1e2d3d;
+    --border2:  #253545;
+    --text:     #c8d8e8;
+    --text-dim: #607080;
+    --text-xs:  #405060;
+    --amber:    #f5a623;
+    --amber-d:  #b87318;
+    --teal:     #2dc9a8;
+    --teal-d:   #1a8a74;
+    --coral:    #e8563a;
+    --coral-d:  #a83828;
+    --blue:     #4a9eda;
+    --blue-d:   #2a6ea0;
+    --green:    #5ec46a;
+    --purple:   #9b7de8;
+    --mono:     'IBM Plex Mono', monospace;
+    --sans:     'IBM Plex Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* ── TOP HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em; color: var(--text);
+  }
+  .logo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 8px var(--teal);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .header-meta {
+    display: flex; align-items: center; gap: 20px;
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+  }
+  .badge {
+    padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .badge-live { background: rgba(45,201,168,.15); color: var(--teal); border: 1px solid rgba(45,201,168,.25); }
+  .badge-ref  { background: rgba(74,158,218,.12); color: var(--blue); border: 1px solid rgba(74,158,218,.2); font-size: 9px; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 28px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .filter-label { font-size: 11px; color: var(--text-dim); font-family: var(--mono); letter-spacing: .04em; }
+  select, .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s;
+  }
+  select:hover, .filter-btn:hover { border-color: var(--teal); }
+  select option { background: var(--surface2); }
+  .filter-divider { width: 1px; height: 20px; background: var(--border); }
+  .filter-btn.active { border-color: var(--amber); color: var(--amber); }
+
+  /* ── MAIN LAYOUT ── */
+  main { padding: 20px 28px 40px; }
+
+  /* ── KPI CARDS ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s, transform .15s;
+    cursor: default;
+  }
+  .kpi-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .kpi-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .kpi-card.c-teal::before   { background: var(--teal); }
+  .kpi-card.c-amber::before  { background: var(--amber); }
+  .kpi-card.c-coral::before  { background: var(--coral); }
+  .kpi-card.c-blue::before   { background: var(--blue); }
+  .kpi-card.c-purple::before { background: var(--purple); }
+
+  .kpi-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); font-family: var(--mono); margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 300; letter-spacing: -.01em; line-height: 1; margin-bottom: 4px; }
+  .kpi-sub   { font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
+  .kpi-delta { font-size: 11px; font-family: var(--mono); font-weight: 500; }
+  .kpi-delta.up   { color: var(--coral); }
+  .kpi-delta.down { color: var(--teal);  }
+  .kpi-delta.flat { color: var(--text-dim); }
+
+  /* ── CHART GRID ── */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-grid-3 {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--text-dim); font-family: var(--mono);
+  }
+  .card-subtitle { font-size: 12px; color: var(--text); margin-top: 2px; }
+  .card-tag {
+    font-size: 9px; padding: 2px 7px; border-radius: 3px;
+    background: rgba(74,158,218,.1); color: var(--blue);
+    border: 1px solid rgba(74,158,218,.18);
+    font-family: var(--mono); letter-spacing: .05em;
+  }
+
+  canvas { display: block; }
+
+  /* ── ALERT TABLE ── */
+  .alert-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .alert-row:last-child { border-bottom: none; }
+  .alert-sev {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .sev-critical { background: var(--coral); box-shadow: 0 0 6px var(--coral); }
+  .sev-warning  { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .sev-info     { background: var(--blue);  }
+
+  .alert-topic { font-size: 12px; flex: 1; }
+  .alert-week  { font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
+  .alert-delta {
+    font-size: 12px; font-family: var(--mono); font-weight: 500;
+    padding: 2px 8px; border-radius: 3px;
+  }
+  .delta-critical { color: var(--coral); background: rgba(232,86,58,.12); }
+  .delta-warning  { color: var(--amber); background: rgba(245,166,35,.1);  }
+  .delta-info     { color: var(--blue);  background: rgba(74,158,218,.1);  }
+
+  /* ── TOPIC TABLE ── */
+  .topic-row {
+    display: grid;
+    grid-template-columns: 1fr 60px 60px 90px;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .topic-row.header { color: var(--text-dim); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  .topic-name  { color: var(--text); font-size: 12px; font-family: var(--sans); }
+  .topic-count { text-align: right; color: var(--text); }
+  .topic-conf  { text-align: right; color: var(--text-dim); }
+  .sent-pill   {
+    text-align: center; padding: 2px 8px; border-radius: 3px; font-size: 10px;
+    letter-spacing: .05em; font-weight: 500;
+  }
+  .sent-pos { background: rgba(94,196,106,.15); color: var(--green); }
+  .sent-neg { background: rgba(232,86,58,.15);  color: var(--coral); }
+  .sent-neu { background: rgba(74,158,218,.12); color: var(--blue);  }
+
+  /* ── KEYWORDS ── */
+  .keyword-cloud { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+  .kw {
+    font-family: var(--mono); font-size: 11px;
+    padding: 4px 10px; border-radius: 3px;
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    transition: all .2s; cursor: default;
+  }
+  .kw:hover { color: var(--text); border-color: var(--amber); }
+  .kw.sz-xl { font-size: 15px; color: var(--coral);  border-color: rgba(232,86,58,.35); }
+  .kw.sz-lg { font-size: 13px; color: var(--amber);  border-color: rgba(245,166,35,.3); }
+  .kw.sz-md { font-size: 12px; color: var(--blue);   border-color: rgba(74,158,218,.25); }
+  .kw.sz-sm { font-size: 11px; color: var(--text-dim); }
+
+  /* ── MINI SPARKLINE ── */
+  .sparkline-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+  .spark { flex: 1; height: 32px; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10px; color: var(--text-xs);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .chart-grid-3 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 780px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid, .chart-grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    FEEDBACK·INTELLIGENCE / v1.0
+  </div>
+  <div class="header-meta">
+    <span class="badge badge-ref">USE CASE #66 · #64 · #65</span>
+    <span class="badge badge-ref">GOOGLE AI BLUEPRINT</span>
+    <span>LAST UPDATED: <strong id="ts-label">–</strong></span>
+    <span class="badge badge-live">LIVE SIM</span>
+  </div>
+</header>
+
+<!-- ══════════════════════ FILTER BAR ══════════════════════ -->
+<div class="filter-bar">
+  <span class="filter-label">DATE RANGE</span>
+  <select id="filter-period" onchange="applyFilters()">
+    <option value="12">Last 12 weeks</option>
+    <option value="8" selected>Last 8 weeks</option>
+    <option value="4">Last 4 weeks</option>
+  </select>
+
+  <div class="filter-divider"></div>
+  <span class="filter-label">SOURCE</span>
+  <select id="filter-source" onchange="applyFilters()">
+    <option value="all">All channels</option>
+    <option value="amazon">Amazon Reviews</option>
+    <option value="twitter">Twitter/X</option>
+    <option value="support">Support Tickets</option>
+    <option value="yelp">Yelp</option>
+  </select>
+
+  <div class="filter-divider"></div>
+  <span class="filter-label">SENTIMENT</span>
+  <button class="filter-btn active" id="btn-pos" onclick="toggleSent('positive')">Positive</button>
+  <button class="filter-btn active" id="btn-neu" onclick="toggleSent('neutral')">Neutral</button>
+  <button class="filter-btn active" id="btn-neg" onclick="toggleSent('negative')">Negative</button>
+
+  <div class="filter-divider"></div>
+  <button class="filter-btn" onclick="resetFilters()" style="color:var(--teal);border-color:rgba(45,201,168,.3)">↺ RESET</button>
+</div>
+
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<main>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi-card c-teal">
+      <div class="kpi-label">Total Feedback</div>
+      <div class="kpi-value" id="kpi-total">14,892</div>
+      <div class="kpi-sub">this period</div>
+    </div>
+    <div class="kpi-card c-amber">
+      <div class="kpi-label">Positive Rate</div>
+      <div class="kpi-value" id="kpi-pos" style="color:var(--teal)">62.4%</div>
+      <div class="kpi-delta down" id="kpi-pos-d">▲ +3.1% vs prev</div>
+    </div>
+    <div class="kpi-card c-coral">
+      <div class="kpi-label">Negative Rate</div>
+      <div class="kpi-value" id="kpi-neg" style="color:var(--coral)">21.8%</div>
+      <div class="kpi-delta up" id="kpi-neg-d">▲ +4.3% this week</div>
+    </div>
+    <div class="kpi-card c-blue">
+      <div class="kpi-label">Top Pain Point</div>
+      <div class="kpi-value" style="font-size:16px;padding-top:4px;font-weight:400" id="kpi-topic">UI/UX Issue</div>
+      <div class="kpi-sub" id="kpi-topic-cnt">1,842 mentions</div>
+    </div>
+    <div class="kpi-card c-purple">
+      <div class="kpi-label">Avg AI Confidence</div>
+      <div class="kpi-value" id="kpi-conf" style="color:var(--purple)">91.3%</div>
+      <div class="kpi-sub">claude-3-5-sonnet</div>
+    </div>
+  </div>
+
+  <!-- ROW 1: Sentiment Trend + Topic Distribution -->
+  <div class="chart-grid" style="grid-template-columns:3fr 2fr">
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Sentiment Trend</div>
+          <div class="card-subtitle">Weekly positive / negative % over time</div>
+        </div>
+        <span class="card-tag">VW_WEEKLY_SENTIMENT_TREND</span>
+      </div>
+      <canvas id="chart-trend" height="190"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Topic Distribution</div>
+          <div class="card-subtitle">By volume, all sources</div>
+        </div>
+        <span class="card-tag">VW_TOPIC_DISTRIBUTION</span>
+      </div>
+      <canvas id="chart-topics" height="190"></canvas>
+    </div>
+  </div>
+
+  <!-- ROW 2: Source Breakdown + Spike Alerts + Keyword Cloud -->
+  <div class="chart-grid-3">
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">⚠ Spike Alerts — This Week</div>
+          <div class="card-subtitle">Topics with abnormal volume vs prior week</div>
+        </div>
+        <span class="card-tag">VW_TOPIC_SPIKES</span>
+      </div>
+      <div id="alert-list">
+        <!-- JS rendered -->
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Source Channels</div>
+          <div class="card-subtitle">% of total feedback</div>
+        </div>
+        <span class="card-tag">VW_SOURCE_SUMMARY</span>
+      </div>
+      <canvas id="chart-source" height="160"></canvas>
+      <div id="source-legend" style="margin-top:10px;display:flex;flex-direction:column;gap:5px"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Negative Keywords</div>
+          <div class="card-subtitle">Most frequent this period</div>
+        </div>
+        <span class="card-tag">VW_KEYWORD_FREQUENCY</span>
+      </div>
+      <div class="keyword-cloud" id="kw-cloud"><!-- JS rendered --></div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Topic Detail Table + Rolling Avg -->
+  <div class="chart-grid" style="grid-template-columns:3fr 2fr">
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Topic Detail</div>
+          <div class="card-subtitle">Volume, sentiment, AI confidence score</div>
+        </div>
+        <span class="card-tag">PROCESSED_FEEDBACK</span>
+      </div>
+      <div id="topic-table"><!-- JS rendered --></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Rolling 4-Week Avg Sentiment</div>
+          <div class="card-subtitle">Smoothed score: −1 (negative) → +1 (positive)</div>
+        </div>
+        <span class="card-tag">WINDOW FUNCTION</span>
+      </div>
+      <canvas id="chart-rolling" height="190"></canvas>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>AI-POWERED CUSTOMER FEEDBACK INTELLIGENCE · GOOGLE AI BLUEPRINT #66 · BUILT WITH POSTGRESQL + PYTHON + CLAUDE API</span>
+  <span id="footer-ts">–</span>
+</footer>
+
+<!-- ══════════════════════ JAVASCRIPT ══════════════════════ -->
+<script>
+/* ── GLOBALS ──────────────────────────────────────────────── */
+const WEEKS = 12;
+let sentFilters = { positive: true, neutral: true, negative: true };
+let charts = {};
+
+/* ── SYNTHETIC DATA GENERATOR ────────────────────────────── */
+function rnd(min, max, dec=0) {
+  const v = min + Math.random() * (max - min);
+  return dec ? +v.toFixed(dec) : Math.round(v);
+}
+
+function generateWeeks(n) {
+  const weeks = [];
+  let posBase = 58, negBase = 22;
+  for (let i = n; i >= 1; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i * 7);
+    const label = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
+    const spike = i === 2 ? 8 : 0;
+    const total = rnd(1200, 2400);
+    const neg = Math.min(rnd(negBase + spike - 3, negBase + spike + 5), 45);
+    const pos = Math.min(rnd(posBase - spike - 4, posBase - spike + 4), 80);
+    const neu = 100 - pos - neg;
+    weeks.push({ label, total, pos, neg, neu: Math.max(neu, 5) });
+    posBase += rnd(-2, 2);
+    negBase += rnd(-1, 1);
+  }
+  return weeks;
+}
+
+function generateRolling(weeks) {
+  const raw = weeks.map(w => +((w.pos - w.neg) / 100 * 2 - 1).toFixed(3));
+  const rolling = raw.map((_, i) => {
+    const slice = raw.slice(Math.max(0, i - 3), i + 1);
+    return +(slice.reduce((a, b) => a + b, 0) / slice.length).toFixed(3);
+  });
+  return { raw, rolling };
+}
+
+const TOPICS = [
+  { name:'UI/UX Issue',       cnt:1842, sent:'negative', conf:0.94 },
+  { name:'Bug / Error',       cnt:1214, sent:'negative', conf:0.96 },
+  { name:'Feature Request',   cnt:1108, sent:'neutral',  conf:0.91 },
+  { name:'Performance Issue', cnt: 892, sent:'negative', conf:0.93 },
+  { name:'Feature Praise',    cnt: 830, sent:'positive', conf:0.97 },
+  { name:'Billing Issue',     cnt: 612, sent:'negative', conf:0.99 },
+  { name:'General Positive',  cnt: 980, sent:'positive', conf:0.89 },
+  { name:'Customer Support',  cnt: 430, sent:'neutral',  conf:0.88 },
+  { name:'Shipping/Delivery', cnt: 318, sent:'negative', conf:0.92 },
+  { name:'Other',             cnt: 192, sent:'neutral',  conf:0.76 },
+];
+
+const ALERTS = [
+  { topic:'UI/UX Issue',     week:'05 May–11 May', delta:'+31%', sev:'critical', curr:312, prev:238 },
+  { topic:'Billing Issue',   week:'05 May–11 May', delta:'+24%', sev:'warning',  curr:98,  prev:79  },
+  { topic:'Bug / Error',     week:'05 May–11 May', delta:'+18%', sev:'warning',  curr:201, prev:170 },
+  { topic:'Performance',     week:'05 May–11 May', delta:'+11%', sev:'info',     curr:144, prev:130 },
+  { topic:'Feature Praise',  week:'05 May–11 May', delta:'+6%',  sev:'info',     curr:158, prev:149 },
+];
+
+const KEYWORDS = [
+  { w:'login',    sz:'xl' }, { w:'crash',    sz:'xl' }, { w:'slow',     sz:'xl' },
+  { w:'broken',   sz:'lg' }, { w:'billing',  sz:'lg' }, { w:'mobile',   sz:'lg' },
+  { w:'refund',   sz:'lg' }, { w:'timeout',  sz:'md' }, { w:'payment',  sz:'md' },
+  { w:'checkout', sz:'md' }, { w:'dark mode',sz:'md' }, { w:'glitch',   sz:'sm' },
+  { w:'laggy',    sz:'sm' }, { w:'404',      sz:'sm' }, { w:'reset',    sz:'sm' },
+  { w:'button',   sz:'sm' }, { w:'freeze',   sz:'sm' }, { w:'error',    sz:'sm' },
+  { w:'expired',  sz:'sm' }, { w:'missing',  sz:'sm' },
+];
+
+const SOURCES = [
+  { name:'Amazon Reviews', pct:34, color:'#f5a623' },
+  { name:'Twitter/X',      pct:26, color:'#4a9eda' },
+  { name:'Support Tickets',pct:22, color:'#e8563a' },
+  { name:'Yelp',           pct:12, color:'#9b7de8' },
+  { name:'Other',          pct: 6, color:'#607080' },
+];
+
+/* ── CHART DEFAULTS ──────────────────────────────────────── */
+Chart.defaults.font.family = 'IBM Plex Mono, monospace';
+Chart.defaults.font.size = 10;
+Chart.defaults.color = '#607080';
+
+const gridOpts = {
+  color: '#1e2d3d',
+  borderColor: '#1e2d3d',
+  tickColor: '#1e2d3d',
+};
+
+/* ── INIT ALL CHARTS ─────────────────────────────────────── */
+function initCharts() {
+  const wks = generateWeeks(parseInt(document.getElementById('filter-period').value));
+  const labels = wks.map(w => w.label);
+
+  // 1. Sentiment trend
+  if (charts.trend) charts.trend.destroy();
+  charts.trend = new Chart(document.getElementById('chart-trend'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Positive %',
+          data: sentFilters.positive ? wks.map(w=>w.pos) : [],
+          borderColor: '#2dc9a8', backgroundColor: 'rgba(45,201,168,.07)',
+          borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, tension: 0.35, fill: true,
+        },
+        {
+          label: 'Negative %',
+          data: sentFilters.negative ? wks.map(w=>w.neg) : [],
+          borderColor: '#e8563a', backgroundColor: 'rgba(232,86,58,.06)',
+          borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, tension: 0.35, fill: true,
+        },
+        {
+          label: 'Neutral %',
+          data: sentFilters.neutral ? wks.map(w=>w.neu) : [],
+          borderColor: '#4a9eda', backgroundColor: 'rgba(74,158,218,.05)',
+          borderWidth: 1.5, borderDash: [4,3], pointRadius: 2, tension: 0.35, fill: false,
+        },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: {
+        legend: { position:'bottom', labels:{ boxWidth:10, padding:14 } },
+        tooltip: {
+          backgroundColor:'#111820', borderColor:'#1e2d3d', borderWidth:1,
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%` }
+        }
+      },
+      scales: {
+        x: { grid: gridOpts, ticks:{ maxRotation:0 } },
+        y: { grid: gridOpts, min:0, max:100, ticks:{ callback: v=>v+'%' } }
+      }
+    }
+  });
+
+  // 2. Topic bar
+  const topTopics = TOPICS.slice(0,7);
+  if (charts.topics) charts.topics.destroy();
+  charts.topics = new Chart(document.getElementById('chart-topics'), {
+    type: 'bar',
+    data: {
+      labels: topTopics.map(t=>t.name.replace('Issue','').replace('Request','Req.').trim()),
+      datasets: [{
+        data: topTopics.map(t=>t.cnt),
+        backgroundColor: topTopics.map(t=>
+          t.sent==='negative' ? 'rgba(232,86,58,.7)' :
+          t.sent==='positive' ? 'rgba(45,201,168,.7)' : 'rgba(74,158,218,.6)'
+        ),
+        borderColor: topTopics.map(t=>
+          t.sent==='negative' ? '#e8563a' :
+          t.sent==='positive' ? '#2dc9a8' : '#4a9eda'
+        ),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{display:false}, tooltip:{
+        backgroundColor:'#111820', borderColor:'#1e2d3d', borderWidth:1,
+      }},
+      scales: {
+        x: { grid:gridOpts, ticks:{maxTicksLimit:5} },
+        y: { grid:{color:'transparent'}, ticks:{font:{size:10}} }
+      }
+    }
+  });
+
+  // 3. Source donut
+  if (charts.source) charts.source.destroy();
+  charts.source = new Chart(document.getElementById('chart-source'), {
+    type: 'doughnut',
+    data: {
+      labels: SOURCES.map(s=>s.name),
+      datasets: [{
+        data: SOURCES.map(s=>s.pct),
+        backgroundColor: SOURCES.map(s=>s.color+'bb'),
+        borderColor: SOURCES.map(s=>s.color),
+        borderWidth: 1.5, hoverOffset: 4,
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins: {
+        legend:{display:false},
+        tooltip:{ backgroundColor:'#111820', borderColor:'#1e2d3d', borderWidth:1,
+          callbacks:{ label: ctx=>' '+ctx.parsed+'% — '+ctx.label } }
+      }
+    }
+  });
+
+  // source legend
+  const sl = document.getElementById('source-legend');
+  sl.innerHTML = SOURCES.map(s=>`
+    <div style="display:flex;align-items:center;gap:8px;font-size:11px;font-family:var(--mono)">
+      <span style="width:8px;height:8px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
+      <span style="flex:1;color:var(--text-dim)">${s.name}</span>
+      <span style="color:var(--text)">${s.pct}%</span>
+    </div>`).join('');
+
+  // 4. Rolling avg
+  const { raw, rolling } = generateRolling(wks);
+  if (charts.rolling) charts.rolling.destroy();
+  charts.rolling = new Chart(document.getElementById('chart-rolling'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Weekly score',
+          data: raw,
+          borderColor: 'rgba(155,125,232,.35)', backgroundColor:'transparent',
+          borderWidth:1.5, borderDash:[3,3], pointRadius:2, tension:0.3,
+        },
+        {
+          label: '4-wk rolling avg',
+          data: rolling,
+          borderColor: '#9b7de8', backgroundColor:'rgba(155,125,232,.08)',
+          borderWidth:2.5, pointRadius:3, tension:0.5, fill:true,
+        },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'bottom',labels:{boxWidth:10,padding:12}},
+        tooltip:{ backgroundColor:'#111820', borderColor:'#1e2d3d', borderWidth:1,
+          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}`}
+        }
+      },
+      scales:{
+        x:{grid:gridOpts, ticks:{maxRotation:0}},
+        y:{grid:gridOpts, min:-1, max:1,
+          ticks:{callback:v=>v===0?'0':v>0?'+'+v:v}
+        }
+      }
+    }
+  });
+}
+
+/* ── ALERT LIST ──────────────────────────────────────────── */
+function renderAlerts() {
+  document.getElementById('alert-list').innerHTML = ALERTS.map(a=>`
+    <div class="alert-row">
+      <div class="alert-sev sev-${a.sev}"></div>
+      <div style="flex:1">
+        <div class="alert-topic">${a.topic}</div>
+        <div class="alert-week">${a.week} · ${a.curr} vs ${a.prev}</div>
+      </div>
+      <div class="alert-delta delta-${a.sev}">${a.delta}</div>
+    </div>`).join('');
+}
+
+/* ── TOPIC TABLE ─────────────────────────────────────────── */
+function renderTopicTable() {
+  document.getElementById('topic-table').innerHTML = `
+    <div class="topic-row header">
+      <div>Topic</div><div class="topic-count">Count</div>
+      <div class="topic-conf">Conf.</div><div>Sentiment</div>
+    </div>` +
+    TOPICS.map(t=>`
+    <div class="topic-row">
+      <div class="topic-name">${t.name}</div>
+      <div class="topic-count">${t.cnt.toLocaleString()}</div>
+      <div class="topic-conf">${(t.conf*100).toFixed(0)}%</div>
+      <div><span class="sent-pill sent-${t.sent==='negative'?'neg':t.sent==='positive'?'pos':'neu'}">${t.sent}</span></div>
+    </div>`).join('');
+}
+
+/* ── KEYWORD CLOUD ───────────────────────────────────────── */
+function renderKeywords() {
+  document.getElementById('kw-cloud').innerHTML =
+    KEYWORDS.map(k=>`<span class="kw sz-${k.sz}">${k.w}</span>`).join('');
+}
+
+/* ── FILTERS ─────────────────────────────────────────────── */
+function toggleSent(type) {
+  sentFilters[type] = !sentFilters[type];
+  const btn = document.getElementById('btn-' + type.slice(0,3));
+  btn.classList.toggle('active', sentFilters[type]);
+  initCharts();
+}
+
+function applyFilters() { initCharts(); }
+
+function resetFilters() {
+  sentFilters = { positive:true, neutral:true, negative:true };
+  ['pos','neu','neg'].forEach(k=>document.getElementById('btn-'+k).classList.add('active'));
+  document.getElementById('filter-period').value = '8';
+  document.getElementById('filter-source').value = 'all';
+  initCharts();
+}
+
+/* ── TIMESTAMPS ──────────────────────────────────────────── */
+function setTimestamps() {
+  const now = new Date();
+  const fmt = now.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('ts-label').textContent = fmt;
+  document.getElementById('footer-ts').textContent = 'GENERATED: ' + fmt + ' · DATA: SIMULATED BASED ON KAGGLE DATASETS';
+}
+
+/* ── BOOT ────────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  setTimestamps();
+  initCharts();
+  renderAlerts();
+  renderTopicTable();
+  renderKeywords();
+});
+</script>
+</body>
+</html>
